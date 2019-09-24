@@ -21,6 +21,10 @@
   },
   "homepage": "https://github.com/ashleygwilliams/my_package",
   "dependencies": {
+    "quagga": "^0.12.1"
+  },
+  "devDependencies": {
+    "@types/node": "^12.7.6",
     "typescript": "^3.6.3"
   }
 }
