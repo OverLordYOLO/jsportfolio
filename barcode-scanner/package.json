@@ -1,0 +1,26 @@
+{
+  "name": "barcode_scanner",
+  "description": "Service that reads barcodes",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node out/index.js",
+    "run:dev": "npm run build && npm run start",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ashleygwilliams/my_package.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ashleygwilliams/my_package/issues"
+  },
+  "homepage": "https://github.com/ashleygwilliams/my_package",
+  "dependencies": {
+    "typescript": "^3.6.3"
+  }
+}
