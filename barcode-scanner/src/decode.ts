@@ -1,5 +1,5 @@
 export class Decoder {
-    static async decode(filePath:string, readers: string[]) {
+    static async decode(filePath:string, readers: string[]): Promise<{"result": any|undefined, "readers": string[], "isFound": boolean, error: string|undefined}> {
         const re = {
             "result": undefined,
             "readers": readers,
