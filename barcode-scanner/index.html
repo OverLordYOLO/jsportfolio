@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Barcode scanner</title>
+</head>
+<body>
+    <div id="bar_data" style="visibility: hidden;"></div>
+    <img id="bar_img" style="max-width: 100px;">
+    <h1>Barcode scanner</h1>
+    <input type="file" onchange="onFileSelected(event)" name="barcode_image" id="barcode_image">
+    <button onclick="sendForm()">Send</button>
+    <button onclick="showImage()">Show Image</button>
+    <div id="bar_result"></div>
+</body>
+<script>
+var image_data = undefined;
+function sendForm() {
+    let image = document.getElementById("bar_img").src;
+    if (!image) {
+        alert("select an image");
+        return;
+    }
+    var xhr = new XMLHttpRequest();
+    var url = "http://localhost:3000/decode";
+    xhr.open("POST", url, true);
+    // xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText);
+            console.log("incoming: ",json);
+            const bar_result = document.getElementById("bar_result");
+            if (json.isFound) {
+                bar_result.innerHTML = json.result;
+            } else {
+                bar_result.innerHTML = "Barcode could not be detected.\n"+json.error;
+            }
+        }
+    };
+    console.log(document.getElementById("bar_data").text.length);
+    var data = JSON.stringify({"fileName": document.getElementById("bar_img").title, "image": document.getElementById("bar_data").text});
+    console.log(data);
+    xhr.send(data);
+}
+function onFileSelected(event) {
+  var selectedFile = event.target.files[0];
+  console.log(selectedFile);
+  var reader = new FileReader();
+
+  var imgtag = document.getElementById("bar_img");
+  imgtag.title = selectedFile.name;
+
+  reader.onload = function(event) {
+    imgtag.src = event.target.result;
+    document.getElementById("bar_data").text = event.target.result;
+  };
+
+  reader.readAsDataURL(selectedFile);
+}
+function showImage() {
+    let image = document.getElementById("bar_img").src;
+    if (document.getElementById("bar_img").src) {
+        alert(document.getElementById("bar_img").src);
+    } else {
+        alert("data is undefined");
+    }
+}
+</script>
+</html>
