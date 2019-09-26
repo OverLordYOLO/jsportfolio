@@ -6,6 +6,8 @@ import  * as statusCode from "http-status-codes";
 import { Decoder } from "./decode";
 
 const decode_handler: AugmentedRequestHandler = async function (req: IncomingMessage, res: ServerResponse) {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Headers", "X-Requested-With");
     const data = JSON.parse(await buffer(req) as string);
     let result;
     let readers = data.readers;
