@@ -1,5 +1,5 @@
 export class Decoder {
-    static async decode(filePath:string, readers: string[]): Promise<{"result": any|undefined, "readers": string[], "isFound": boolean, error: string|undefined}> {
+    static async decode(image:string, readers: string[]): Promise<{"result": any|undefined, "readers": string[], "isFound": boolean, error: string|undefined}> {
         const re = {
             "result": undefined,
             "readers": readers,
@@ -10,7 +10,7 @@ export class Decoder {
             re.result = await new Promise((resolve, rejects) => {
                 const Quagga = require('quagga').default;
                 Quagga.decodeSingle({
-                    src: filePath,
+                    src: image,
                     numOfWorkers: 0,
                     decoder: {
                         readers: readers
