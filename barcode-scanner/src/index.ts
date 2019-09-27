@@ -17,7 +17,7 @@ const decode_handler: AugmentedRequestHandler = async function (req: IncomingMes
         readers = ["code_128_reader"];
     }
     result = await Decoder.decode(data.image, readers);
-    if (result.result) {
+    if (result.result && result.isFound) {
         result.result = result.result.codeResult.code;
     }
     send(res, statusCode.OK, result);
@@ -27,5 +27,5 @@ module.exports = router(
     post("/decode", decode_handler),
     get("/info", (req: IncomingMessage, res: ServerResponse) => {
         res.setHeader("Access-Control-Allow-Origin", "*");
-        send(res, statusCode.OK, "Test info");
+        send(res, statusCode.OK, "barcode-scanner service");
     }));
