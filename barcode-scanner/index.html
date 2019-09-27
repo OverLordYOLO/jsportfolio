@@ -6,27 +6,107 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Barcode scanner</title>
 </head>
+<style>
+body div {
+    margin: auto;
+    max-width: 500px;
+}
+table tr td {
+    padding: 3px;
+}
+</style>
 <body>
-    <div id="bar_data" style="visibility: hidden;"></div>
-    <img id="bar_img" style="max-width: 100px;">
-    <h1>Barcode scanner</h1>
-    <input type="file" onchange="onFileSelected(event)" name="barcode_image" id="barcode_image">
-    <button onclick="sendForm()">Send</button>
-    <button onclick="showImage()">Show Image</button>
-    <div id="bar_result"></div>
+    <div>
+        <h1>Barcode scanner</h1>
+        <div id="bar_data" style="visibility: hidden;"></div>
+        <img id="bar_img" style="max-width: 100px;">
+        <br>
+        <table>
+            <tr>
+                <td>
+                    <span style="padding-right: 20px; font-size: 25px;">Pick barcode image:</span>
+                </td>
+                <td>
+                        <input type="file" onchange="onFileSelected(event)" name="barcode_image" id="barcode_image" accept=".png,.jpg">
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">
+                    <button onclick="sendForm()" style="font-size: 25px;">Send</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span>Result:</span>
+                </td>
+                <td>
+                    <div id="bar_result"/>
+                </td>
+            </tr>
+            <tr>
+                <td><span>Select barcode type:</span></td>
+                <td><select name="bar_type_sel" id="bar_type_sel">
+                        <option value="code_128_reader" selected=true>CODE 128</option>
+                        <option value="ean_reader">EAN</option>
+                        <option value="ean_8_reader">EAN 8</option>
+                        <option value="code_39_reader">CODE 39</option>
+                        <option value="code_39_vin_reader">CODE 93 vin</option>
+                        <option value="codabar_reader">CODABAR</option>
+                        <option value="upc_reader">UPC-C</option>
+                        <option value="upc_e_reader">UPC-E</option>
+                        <option value="i2of5_reader">I2of5</option>
+                        <option value="2of5_reader">2of5</option>
+                </select></td>
+            </tr>
+        </table>
+        <hr>
+        <table>
+            <tr>
+                <td>
+                    <span>Edit address</span>
+                </td>
+                <td>
+                    <input type="text" name="address_input" id="address_input">
+                </td>
+                <td>
+                    <button onclick="document.getElementById('url_view').innerText='http://'+document.getElementById('address_input').value+'/decode'">Set url</button>
+                    <button onclick="document.getElementById('url_view').innerText='http://localhost:3000/decode'">Reset url</button>
+                </td>
+            </tr>
+            <tr>
+                <td><span>Address:</span></td>
+                <td>
+                    <div id=url_view>http://localhost:3000/decode</div>
+                </td>
+            </tr>
+        </table>
+    </div>
 </body>
 <script>
-var image_data = undefined;
+function onFileSelected(event) {
+    var selectedFile = event.target.files[0];
+    console.log(selectedFile);
+    var reader = new FileReader();
+
+    var imgtag = document.getElementById("bar_img");
+    imgtag.title = selectedFile.name;
+
+    reader.onload = function(event) {
+    imgtag.src = event.target.result;
+    document.getElementById("bar_data").text = event.target.result;
+    };
+    reader.readAsDataURL(selectedFile);
+}
 function sendForm() {
-    let image = document.getElementById("bar_img").src;
-    if (!image) {
+    document.getElementById("bar_result").innerHTML = "Loading...";
+    let image_data = document.getElementById("bar_img").src;
+    if (!image_data) {
         alert("select an image");
         return;
     }
     var xhr = new XMLHttpRequest();
-    var url = "http://localhost:3000/decode";
+    var url = document.getElementById("url_view").innerText;
     xhr.open("POST", url, true);
-    // xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var json = JSON.parse(xhr.responseText);
@@ -40,32 +120,13 @@ function sendForm() {
         }
     };
     console.log(document.getElementById("bar_data").text.length);
-    var data = JSON.stringify({"fileName": document.getElementById("bar_img").title, "image": document.getElementById("bar_data").text});
+    const fileName = document.getElementById("bar_img").title;
+    const image = document.getElementById("bar_data").text;
+    const readers_select = document.getElementById("bar_type_sel");
+    const readers = readers_select.options[readers_select.selectedIndex].value;
+    var data = JSON.stringify({"fileName": fileName, "image": image, "readers": readers});
     console.log(data);
     xhr.send(data);
-}
-function onFileSelected(event) {
-  var selectedFile = event.target.files[0];
-  console.log(selectedFile);
-  var reader = new FileReader();
-
-  var imgtag = document.getElementById("bar_img");
-  imgtag.title = selectedFile.name;
-
-  reader.onload = function(event) {
-    imgtag.src = event.target.result;
-    document.getElementById("bar_data").text = event.target.result;
-  };
-
-  reader.readAsDataURL(selectedFile);
-}
-function showImage() {
-    let image = document.getElementById("bar_img").src;
-    if (document.getElementById("bar_img").src) {
-        alert(document.getElementById("bar_img").src);
-    } else {
-        alert("data is undefined");
-    }
 }
 </script>
 </html>
