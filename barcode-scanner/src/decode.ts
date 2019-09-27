@@ -16,13 +16,18 @@ export class Decoder {
                         readers: readers
                     },
                 }, function(result: any) {
-                    resolve(result);
+                    if (result.codeResult) {
+                        resolve(result);
+                    } else {
+                        rejects("Not found");
+                    }
                 });
             });
+            re.isFound = true;
         } catch (ex) {
             re.error = ex;
+            re.isFound = false;
         } finally {
-            re.isFound = re.result !== undefined;
             return re;
         }
     }
